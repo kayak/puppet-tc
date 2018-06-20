@@ -1,0 +1,14 @@
+
+# Interface <%= @ifname %>
+tc qdisc del dev <%= @ifname %> root 2>/dev/null
+
+tc qdisc add dev <%= @ifname %> root handle 1: htb default <%= @default %>
+tc class add dev <%= @ifname %> parent 1: classid 1:1 htb rate <%= @bandwidth %> burst <%= @burst %>
+
+<% @classes.sort_by { |k,_| k }.each do |k,v| -%>
+tc class add dev <%= @ifname %> parent 1:1 classid 1:<%= k %> htb rate <%= v['rate'] %><% if v['ceil'] %> ceil <%= v['ceil'] %><% end %><%if v['burst'] %> burst <%= v['burst'] %><% end %>
+<% end -%>
+
+<% @filters.sort_by { |k,_| k }.each do |k,v| -%>
+tc filter add dev <%= @ifname %> protocol ip parent 1:0 prio <%= v['prio'] %> u32<% if v['src'] %> match ip src <%= v['src'] %><% end %><% if v['dst'] %> match ip dst <%= v['dst'] %><% end %><% if v['dport'] %> match ip dport <%= v['dport'] %> 0xffff<% end %><% if v['sport'] %> match ip sport <%= v['sport'] %> 0xffff<% end %> flowid 1:<%= v['flow'] %>
+<% end -%>
