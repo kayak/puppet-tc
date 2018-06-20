@@ -22,12 +22,15 @@
 #
 # [*classes*]
 #   Hash declaring the list of classes and their settings. The settings include rate, ceil, burst.
+#   Hash keys are the numbers used as class id (parent_id:class_id).
 #   * rate  = bandwidth dedicate for this class
 #   * ceil  = maximum bandwidth which can be allowed for the class if the whole bandwidth has excess.
 #   * burst = buffer size, maximum queue lenght that can be served before switching to other classes.
 #
 # [*filters*]
 #   Hash declaring rules which packets to which classes would be assigned.
+#   Hash keys can be anything since they are not used in templates. For bravity it's recommended to name
+#   them the same as flow id.
 #   * prio  = priority of the filter
 #   * src   = src IP address
 #   * dst   = destination IP address.
